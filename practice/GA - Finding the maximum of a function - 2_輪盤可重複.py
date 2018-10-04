@@ -4,7 +4,7 @@ Created on Wed Oct  3 13:40:36 2018
 
 @title: Finding the maximum of a function
 輪盤可重複取
-新世代都會包含就是代未使用的
+新世代都會包含就世代未使用的，所以運氣不好就會有一堆~
 """
 """
 reference:
@@ -66,7 +66,7 @@ class GeneticAlgorithm_maxOfFunc():
         #挑選、分組
         pairNum = 0
         pairNumCount = 0
-        while pairNum < self.crossoverPair:#(len(inputArr)-pairGroup.count(-1)) < self.crossoverPair * self.tournamentSize:
+        while pairNum < self.crossoverPair:
             ranTmp = random.random()
             for i in range(len(weightArr)):
                 if ranTmp < sum(weightArr[:i+1]):
@@ -87,7 +87,7 @@ class GeneticAlgorithm_maxOfFunc():
         newLi = []
         tmpPairLi = np.zeros(self.tournamentSize, dtype=np.int)#暫存要交換的 index 
         for i in range(self.crossoverPair): #第幾對
-            print(i, '---')
+#            print(i, '---')
             #找配對的
             j = 0
             while j != self.tournamentSize:
@@ -98,7 +98,7 @@ class GeneticAlgorithm_maxOfFunc():
                         #break
                     if j == self.tournamentSize:
                         break
-            print(tmpPairLi)
+#            print(tmpPairLi)
             #配對與否
             if random.random() > self.crossoverRate:
                 #one-point 交換點
@@ -152,7 +152,7 @@ class GeneticAlgorithm_maxOfFunc():
             strArr[i] = self.GenerateBitString()
         #開始世代輪替
         for count in range(self.repeatGeneration): 
-            print(count, '-', strArr)
+#            print(count, '-', strArr)
             #Fitness，並記錄
             for i in range(self.populationSize):
                 bitVal = self.CalBitValue(strArr[i])
@@ -160,7 +160,7 @@ class GeneticAlgorithm_maxOfFunc():
             tmpArgmax = fitnessArr.argmax()
             if fitnessArr[tmpArgmax] > self.recordFitnessMax[-1]:
                 self.recordFitnessMax = [strArr[tmpArgmax], self.CalBitValue(strArr[tmpArgmax]), fitnessArr[tmpArgmax]]
-            print(self.recordFitnessMax)
+#            print(self.recordFitnessMax)
 #            print('after Fitness:',strArr)
             #輪盤法抓人出來配對
             #--定義 配對數
@@ -175,7 +175,7 @@ class GeneticAlgorithm_maxOfFunc():
             for i in range(self.populationSize):
                 strArr[i] = self.Mutation(strArr[i])
 #            print('after Mutation:',strArr,'\n\n')
-                
+#        print('總子代數量',len(strArr))
         return self.recordFitnessMax
 if __name__ == '__main__' :
     import time
