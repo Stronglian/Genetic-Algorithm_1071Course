@@ -15,24 +15,28 @@ import random
 
 class GeneticAlgorithm():
     def __init__(self):
+        """
+        crossoverPair 如果設與總字串處剛好的 配對數，會random卡在選不到人
+        """
         #value
         self.bitNum = 5 #位元數
-        self.populationSize = 8 #總組數
+        self.populationSize   = 8 #總字串數
         
-        self.tournamentSize = 2 # 一組配對的組數
-        self.crossoverPair = 3 #配對用到組數#靠，不知道要挑幾個，
-        self.crossoverRate = 0.5#交配率
+        self.tournamentSize   = 2 # 一組配對的字串數
+#        self.crossoverPair    = 3  #配對用到組數 #靠，不知道要挑幾個，
+        self.crossoverPair    = self.populationSize//self.tournamentSize -1  #配對用到數 
         
-        self.mutationRate = 0.8 #突變率
-        self.repeatGeneration = 50 #世代交換
+        self.crossoverRate    = 0.5 #交配率
         
+        self.mutationRate     = 0.2 #突變率
+        self.repeatGeneration = 50 # = 世代數量 -1
         
         #func
         self.FitnessFunc = lambda x : x**2
 #        self.CalValue = lambda li : sum([ num for i in range(self.bitNum) num=(2**i)*li[i] ])
         
         #
-        self.recordFitnessMax = ['', 0]
+        self.recordFitnessMax = ['', 0, 0]
     def GenerateBitString(self):
         """"""
         bitString = ''
@@ -49,6 +53,7 @@ class GeneticAlgorithm():
     
     def RouletteWheelSlection(self, inputArr, fitnessArr):
         """(暫時)依照機率，挑 self.crossoverPair*self.tournamentSize 來挑出來，以weightArr(fitnessArr)來挑選，pairGroup分組，再傳到交配函數處理
+        也可以不用機率直接用 ranTmp = random.randint(0, sumWeight)做處理，但比較慢。
         """
         weightArr = fitnessArr.copy().astype(float)
         pairGroup = [-1 for i in range(len(inputArr))] #配對紀錄
@@ -59,7 +64,6 @@ class GeneticAlgorithm():
         pairNum = 0
         while (len(inputArr)-pairGroup.count(-1)) < self.crossoverPair * self.tournamentSize:
             ranTmp = random.random()
-#            ranTmp = random.randint(0, sumWeight) 
             for i in range(len(weightArr)):
                 if ranTmp < sum(weightArr[:i+1]):
                     if pairGroup[i] != -1:
@@ -103,7 +107,7 @@ class GeneticAlgorithm():
                 for k in range(self.tournamentSize):
                     newArr[tmpPairLi[k]] = tmpStrLi[k]
             else:
-                #沒配對要換掉配對內容變 -1 
+                #沒配對要換掉配對內容變 -1 ，最後統一處理
                 for k in range(self.tournamentSize):
                     pairGroup[tmpPairLi[k]] = -1
 #                #OR 直接換
@@ -135,14 +139,16 @@ class GeneticAlgorithm():
         #生成 對應組數
         for i in range(self.populationSize):
             strArr[i] = self.GenerateBitString()
-        for count in range(self.repeatGeneration):
+        #開始世代輪替
+        for count in range(self.repeatGeneration): 
 #            print(count, '-', strArr)
             #Fitness，並記錄
             for i in range(self.populationSize):
                 bitVal = self.CalBitValue(strArr[i])
                 fitnessArr[i] = self.FitnessFunc(bitVal)
-            if fitnessArr[fitnessArr.argmax()] > self.recordFitnessMax[1]:
-                self.recordFitnessMax = [strArr[fitnessArr.argmax()], fitnessArr[fitnessArr.argmax()]]
+            tmpArgmax = fitnessArr.argmax()
+            if fitnessArr[tmpArgmax] > self.recordFitnessMax[-1]:
+                self.recordFitnessMax = [strArr[tmpArgmax], self.CalBitValue(strArr[tmpArgmax]), fitnessArr[tmpArgmax]]
     #        print(self.recordFitnessMax)
     #        print('after Fitness:',strArr)
             #輪盤法抓人出來配對
@@ -165,7 +171,7 @@ if __name__ == '__main__' :
     print('START')
     test = GeneticAlgorithm()
     
-    test.MainFlow()
+    print(test.MainFlow())
     
     endTime = time.time()
     print('\n\n\nEND,', 'It takes', endTime-startTime ,'sec.')
