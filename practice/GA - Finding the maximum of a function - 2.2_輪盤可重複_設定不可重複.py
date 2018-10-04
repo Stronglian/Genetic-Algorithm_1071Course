@@ -20,6 +20,8 @@ class GeneticAlgorithm_maxOfFunc():
         """
         crossoverPair 如果設與總字串處剛好的 配對數，會random卡在選不到人
         """
+        #set 
+        self.wheelGetDiffPopOnlyTF = True
         #value
         self.bitNum = 5 #位元數
         self.populationSize   = 8 #總字串數
@@ -37,7 +39,7 @@ class GeneticAlgorithm_maxOfFunc():
         self.FitnessFunc = lambda x : x**2
 #        self.CalValue = lambda li : sum([ num for i in range(self.bitNum) num=(2**i)*li[i] ])
         
-        #
+        #record
         self.recordFitnessMax = ['', 0, 0]
     def GenerateBitString(self):
         """"""
@@ -72,10 +74,12 @@ class GeneticAlgorithm_maxOfFunc():
             for i in range(len(weightArr)):
                 if ranTmp < sum(weightArr[:i+1]):
                     #控制重複取與否
-                    if len(pairGroup[i]) != 0:
+                    if len(pairGroup[i]) != 0 and self.wheelGetDiffPopOnlyTF:
+                        weightArr[i] = 0
                         break
                     pairGroup[i].append(pairNum)
                     pairNumCount += 1
+                    #已配對計數
                     if pairNumCount == self.tournamentSize:
                         pairNum += 1
                         pairNumCount = 0
