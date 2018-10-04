@@ -13,7 +13,7 @@ reference:
 import numpy as np
 import random
 
-class GeneticAlgorithm():
+class GeneticAlgorithm_maxOfFunc():
     def __init__(self):
         """
         crossoverPair 如果設與總字串處剛好的 配對數，會random卡在選不到人
@@ -54,22 +54,26 @@ class GeneticAlgorithm():
     def RouletteWheelSlection(self, inputArr, fitnessArr):
         """(暫時)依照機率，挑 self.crossoverPair*self.tournamentSize 來挑出來，以weightArr(fitnessArr)來挑選，pairGroup分組，再傳到交配函數處理
         也可以不用機率直接用 ranTmp = random.randint(0, sumWeight)做處理，但比較慢。
+        不重複取
         """
-        weightArr = fitnessArr.copy().astype(float)
+#        weightArr = (fitnessArr.copy().astype(float))+1
+        weightArr = fitnessArr.copy()
         pairGroup = [-1 for i in range(len(inputArr))] #配對紀錄
-        #計算輪盤
-        sumWeight = weightArr.sum()
-        weightArr /= sumWeight
+#        #計算輪盤
+#        sumWeight = weightArr.sum()
+#        weightArr /= sumWeight
         #挑選、分組
         pairNum = 0
         while (len(inputArr)-pairGroup.count(-1)) < self.crossoverPair * self.tournamentSize:
-            ranTmp = random.random()
+#            ranTmp = random.random()
+            ranTmp = random.randint(0, weightArr.sum())
             for i in range(len(weightArr)):
                 if ranTmp < sum(weightArr[:i+1]):
-                    if pairGroup[i] != -1:
-                        #代表已經有分組了
-                        break
+#                    #代表已經有分組了 #若已經 =0 就免了?
+#                    if pairGroup[i] != -1:
+#                        break
                     pairGroup[i] = pairNum
+                    weightArr[i] = 0 #有組的就不要算進機率了
                     if pairGroup.count(pairNum) == self.tournamentSize:
                         pairNum += 1
                     break
@@ -163,15 +167,15 @@ class GeneticAlgorithm():
                 strArr[i] = self.Mutation(strArr[i])
     #        print('after Mutation:',strArr,'\n\n')
                 
-        print('Final', self.recordFitnessMax)
+#        print('Final', self.recordFitnessMax)
         return self.recordFitnessMax
 if __name__ == '__main__' :
     import time
     startTime = time.time()
     print('START')
-    test = GeneticAlgorithm()
+    test = GeneticAlgorithm_maxOfFunc()
     
-    print(test.MainFlow())
+    print('Final', test.MainFlow())
     
     endTime = time.time()
     print('\n\n\nEND,', 'It takes', endTime-startTime ,'sec.')
