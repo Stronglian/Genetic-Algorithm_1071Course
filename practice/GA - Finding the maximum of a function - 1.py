@@ -72,19 +72,17 @@ class GeneticAlgorithm():
     def RouletteWheelSlection(self, inputArr, fitnessArr):
         #靠，不知道要挑幾個，
         #(暫時)依照機率，挑 self.crossoverPair 來挑出來，以weightArr(fitnessArr)來挑選，pairGroup分組，再傳到交配函數處理
-        weightArr = fitnessArr.copy()#.astype(float)
+        #
+        weightArr = fitnessArr.copy().astype(float)
         pairGroup = [-1 for i in range(len(inputArr))] #配對紀錄
-        #計算輪盤)
+        #計算輪盤
         sumWeight = weightArr.sum()
-#        print(weightArr, sumWeight)
-#        for i in range(len(weightArr)):
-#            weightArr[i] = weightArr[i]/sumWeight
-#        print(weightArr)
+        weightArr /= sumWeight
         #挑選、分組
         pairNum = 0
         while (len(inputArr)-pairGroup.count(-1)) < test.crossoverPair:
-#            ranTmp = random.random()
-            ranTmp = random.randint(0, sumWeight) #如果改機率分布就是 weightArr.astype(float) 先，。這裡改成 random.random()
+            ranTmp = random.random()
+#            ranTmp = random.randint(0, sumWeight) 
             for i in range(len(weightArr)):
                 if ranTmp < sum(weightArr[:i+1]):
                     if pairGroup[i] != -1:
@@ -93,7 +91,6 @@ class GeneticAlgorithm():
                     pairGroup[i] = pairNum
                     if pairGroup.count(pairNum) == self.tournamentSize:
                         pairNum += 1
-                    
                     break
         
         return pairGroup
@@ -121,7 +118,7 @@ if __name__ == '__main__' :
         test.recordFitnessMax = [strArr[fitnessArr.argmax()], fitnessArr[fitnessArr.argmax()]]
     print(test.recordFitnessMax)
     #輪盤法抓人出來配對
-    print(test.RouletteWheelSlection(strArr, fitnessArr))
+    pairGroup = test.RouletteWheelSlection(strArr, fitnessArr)
     #交配
     #one-ponint
 #    #突變
