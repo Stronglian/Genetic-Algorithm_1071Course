@@ -52,7 +52,10 @@ class GeneticAlgorithm_maxOfFunc():
             bit = int(bit)
             sumNum += (2**i)*bit
         return sumNum
-    
+    def CalCorrespondValue(self, bitString):
+        """將 x 轉換到對應的值˙"""
+        x = self.CalBitValue(bitString)
+        return x
     def RouletteWheelSlection(self, inputArr, fitnessArr):
         """(暫時)依照機率，挑 self.crossoverPair*self.tournamentSize 來挑出來，以weightArr(fitnessArr)來挑選，pairGroup分組，再傳到交配函數處理
         也可以不用機率直接用 ranTmp = random.randint(0, sumWeight)做處理，但比較慢。
@@ -162,11 +165,11 @@ class GeneticAlgorithm_maxOfFunc():
 #            print(count, '-', strArr)
             #Fitness，並記錄
             for i in range(self.populationSize):
-                bitVal = self.CalBitValue(strArr[i])
+                bitVal = self.CalCorrespondValue(strArr[i])
                 fitnessArr[i] = self.FitnessFunc(bitVal)
             tmpArgmax = fitnessArr.argmax()
             if fitnessArr[tmpArgmax] > self.recordFitnessMax[-1]:
-                self.recordFitnessMax = [strArr[tmpArgmax], self.CalBitValue(strArr[tmpArgmax]), fitnessArr[tmpArgmax]]
+                self.recordFitnessMax = [strArr[tmpArgmax], self.CalCorrespondValue(strArr[tmpArgmax]), fitnessArr[tmpArgmax]]
 #            print(self.recordFitnessMax)
 #            print('after Fitness:',strArr)
             #輪盤法抓人出來配對

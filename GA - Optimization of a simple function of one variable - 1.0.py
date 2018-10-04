@@ -8,7 +8,9 @@ Created on Fri Oct  5 02:51:31 2018
 修改:
     1. RouletteWheelSlection 遇到 fitfunc 會生負數
      - 針對最小樹小於零的數列，直接加最小值的絕對值
-    2.
+    2. fitness 儲存格改成 float
+    3. (下一站)，跑到趨緩在停
+     - self.repeatGeneration FREE
 """
 """
 reference:
@@ -21,10 +23,10 @@ import random
 class GeneticAlgorithm():
     def __init__(self):
         """
-        wheelGetDiffPopOnlyTF:控制在取配對的時候可不可以單一字串參與多組配對，if true，輸出(strArr)仍有順序姓，else，持續往後疊加
+        __wheelGetDiffPopOnlyTF__:控制在取配對的時候可不可以單一字串參與多組配對，if true，輸出(strArr)仍有順序姓，else，持續往後疊加
         """
         #set 
-        self.wheelGetDiffPopOnlyTF = False
+        self.__wheelGetDiffPopOnlyTF__ = True
         #value
         #題目指定
         self.bitNum = 22 #位元數 #因為要精確到六位數，所以 2**21 < (self.domainUpperbound-self.domainLowerbound)*(10**6) <2**22
@@ -35,7 +37,7 @@ class GeneticAlgorithm():
         self.tournamentSize   = 2 # 一組配對的字串數
 #        self.crossoverPair    = 3  #配對用到組數 #靠，不知道要挑幾個，
         self.crossoverPair    = self.populationSize//self.tournamentSize -1  #配對用到數 
-        self.repeatGeneration = 10 # = 世代數量 -1
+        self.repeatGeneration = 50 # = 世代數量 -1
         
         #func
         self.FitnessFunc = lambda x : (x)*np.sin(31.4*x)+1.0
@@ -58,6 +60,7 @@ class GeneticAlgorithm():
             sumNum += (2**i)*bit
         return sumNum
     def CalCorrespondValue(self, bitString):
+        """將 x 轉換到對應的值˙"""
         x_ = self.CalBitValue(bitString)
         x = self.domainLowerbound + x_*(self.domainUpperbound - self.domainLowerbound)/( 2**self.bitNum -1)
         return x
@@ -78,7 +81,7 @@ class GeneticAlgorithm():
             for i in range(len(weightArr)):
                 if ranTmp < sum(weightArr[:i+1]):
                     #控制重複取與否
-                    if len(pairGroup[i]) != 0 and self.wheelGetDiffPopOnlyTF:
+                    if len(pairGroup[i]) != 0 and self.__wheelGetDiffPopOnlyTF__:
                         weightArr[i] = 0
                         break
                     pairGroup[i].append(pairNum)
@@ -95,7 +98,7 @@ class GeneticAlgorithm():
         one-ponint
         """
 #        print('Crossover','in-', inputArr)
-        if self.wheelGetDiffPopOnlyTF:
+        if self.__wheelGetDiffPopOnlyTF__:
             newLi = np.array([ '*'*self.bitNum for i in range(self.populationSize)])
         else:
             newLi = []
@@ -124,7 +127,7 @@ class GeneticAlgorithm():
                     else: #後段交換
                         for k in range(self.tournamentSize):#輪換
                             tmpStrLi[k] += inputArr[tmpPairLi[k+1 if k+1 < self.tournamentSize else 0]][j]
-                if self.wheelGetDiffPopOnlyTF:
+                if self.__wheelGetDiffPopOnlyTF__:
                     #如果從頭儲存，無法看變化，所以就按照位置吧；
                     for k in range(self.tournamentSize):
                         newLi[tmpPairLi[k]] = tmpStrLi[k]
@@ -139,7 +142,7 @@ class GeneticAlgorithm():
         
 #        print('Crossover','pairGroup', pairGroup)
         #處理沒有crossover的
-        if self.wheelGetDiffPopOnlyTF:
+        if self.__wheelGetDiffPopOnlyTF__:
             for k, pairNumLi in enumerate(pairGroup):
                 if len(pairNumLi) == 0:
                     newLi[k] = inputArr[k]
@@ -163,7 +166,7 @@ class GeneticAlgorithm():
         """"""
         #儲存空間，String、Fitness
         strArr = np.array([ '*'*self.bitNum for i in range(self.populationSize)])
-        fitnessArr = np.array([ 0.0 for i in range(self.populationSize)])
+        fitnessArr = np.zeros(self.populationSize, dtype = np.float)
         #生成 對應組數
         for i in range(self.populationSize):
             strArr[i] = self.GenerateBitString()
