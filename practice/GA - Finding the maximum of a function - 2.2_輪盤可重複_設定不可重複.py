@@ -61,15 +61,19 @@ class GeneticAlgorithm_maxOfFunc():
         weightArr = (fitnessArr.copy().astype(float))+1
         pairGroup = [[] for i in range(len(inputArr))] #配對紀錄
         #計算輪盤
-        sumWeight = weightArr.sum()
-        weightArr /= sumWeight
+#        sumWeight = weightArr.sum()
+#        weightArr /= sumWeight
         #挑選、分組
         pairNum = 0
         pairNumCount = 0
         while pairNum < self.crossoverPair:
-            ranTmp = random.random()
+#            ranTmp = random.random()
+            ranTmp = random.randint(0, weightArr.sum())
             for i in range(len(weightArr)):
                 if ranTmp < sum(weightArr[:i+1]):
+                    #控制重複取與否
+                    if len(pairGroup[i]) != 0:
+                        break
                     pairGroup[i].append(pairNum)
                     pairNumCount += 1
                     if pairNumCount == self.tournamentSize:
@@ -175,7 +179,7 @@ class GeneticAlgorithm_maxOfFunc():
             for i in range(self.populationSize):
                 strArr[i] = self.Mutation(strArr[i])
 #            print('after Mutation:',strArr,'\n\n')
-#        print('總子代數量',len(strArr))
+        print('總子代數量:',len(strArr))
         return self.recordFitnessMax
 if __name__ == '__main__' :
     import time
