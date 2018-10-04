@@ -34,12 +34,13 @@ class GeneticAlgorithm():
         #
         self.recordFitnessMax = ['', 0]
     def GenerateBitString(self):
+        """"""
         bitString = ''
         for b in range(self.bitNum):
             bitString += random.choice(['0', '1'])
         return bitString
     def CalBitValue(self, bitString):
-        #計算二位元轉十進位
+        """計算二位元轉十進位"""
         sumNum = 0
         for i, bit in enumerate(bitString[::-1]):#倒序
             bit = int(bit)
@@ -47,9 +48,8 @@ class GeneticAlgorithm():
         return sumNum
     
     def RouletteWheelSlection(self, inputArr, fitnessArr):
-        
-        #(暫時)依照機率，挑 self.crossoverPair*self.tournamentSize 來挑出來，以weightArr(fitnessArr)來挑選，pairGroup分組，再傳到交配函數處理
-        #
+        """(暫時)依照機率，挑 self.crossoverPair*self.tournamentSize 來挑出來，以weightArr(fitnessArr)來挑選，pairGroup分組，再傳到交配函數處理
+        """
         weightArr = fitnessArr.copy().astype(float)
         pairGroup = [-1 for i in range(len(inputArr))] #配對紀錄
         #計算輪盤
@@ -72,9 +72,10 @@ class GeneticAlgorithm():
         
         return pairGroup
     def Crossover(self, inputArr, pairGroup):
-        print('Crossover','in-', inputArr)
-        #依照交配率看成功與否，在 random 從哪裡交錯
-        #one-ponint
+        """依照交配率看成功與否，在 random 從哪裡交錯
+        one-ponint
+        """
+#        print('Crossover','in-', inputArr)
         newArr = np.array([ '*'*self.bitNum for i in range(self.populationSize)])
         tmpPairLi = np.zeros(self.tournamentSize, dtype=np.int)#暫存要交換的 index 
         for i in range(self.crossoverPair): #第幾對
@@ -108,18 +109,17 @@ class GeneticAlgorithm():
 #                #OR 直接換
 #                for k in range(self.tournamentSize):
 #                    newArr[tmpPairLi[k]] = inputArr[tmpPairLi[k]]
-                
         
-        print('Crossover','pairGroup', pairGroup)
-        #沒有crossover的
+#        print('Crossover','pairGroup', pairGroup)
+        #處理沒有crossover的
         for k, pairNum in enumerate(pairGroup):
             if pairNum == -1:
                 newArr[k] = inputArr[k]
         
-        print('Crossover','out-', newArr)
+#        print('Crossover','out-', newArr)
         return newArr
     def Mutation(self, inputStr):
-        #變異
+        """變異"""
         newStr = ''
         for temp in inputStr:
             ranTemp = random.random()
@@ -127,58 +127,45 @@ class GeneticAlgorithm():
                 temp = '0' if temp == '1' else '1'
             newStr+= temp
         return newStr
-    
-#    def MainFlow(self):
-#        #儲存空間，String、Fitness
-#        strArr = np.array([ '' for i in range(self.populationSize)])
-#        fitnessArr = np.array([ 0 for i in range(self.populationSize)])
-#        #生成 對應組數
-#        for i in range(self.populationSize):
-#            strArr[i] = self.GenerateBitString()
-#        #Fitness，並記錄
-#        for i in range(self.populationSize):
-#            fitnessArr[i] = self.FitnessFunc(strArr[i])
-#        self.recordFitnessMax = [strArr[fitnessArr.argmax()], fitnessArr[fitnessArr.argmax()]]
-#        #輪盤法抓人出來配對
-#        #交配
-#        #突變
-#        return
+    def MainFlow(self):
+        """"""
+        #儲存空間，String、Fitness
+        strArr = np.array([ '*'*self.bitNum for i in range(self.populationSize)])
+        fitnessArr = np.array([ 0 for i in range(self.populationSize)])
+        #生成 對應組數
+        for i in range(self.populationSize):
+            strArr[i] = self.GenerateBitString()
+        for count in range(self.repeatGeneration):
+#            print(count, '-', strArr)
+            #Fitness，並記錄
+            for i in range(self.populationSize):
+                bitVal = self.CalBitValue(strArr[i])
+                fitnessArr[i] = self.FitnessFunc(bitVal)
+            if fitnessArr[fitnessArr.argmax()] > self.recordFitnessMax[1]:
+                self.recordFitnessMax = [strArr[fitnessArr.argmax()], fitnessArr[fitnessArr.argmax()]]
+    #        print(self.recordFitnessMax)
+    #        print('after Fitness:',strArr)
+            #輪盤法抓人出來配對
+            pairGroup = self.RouletteWheelSlection(strArr, fitnessArr)
+    #        print('after RouletteWheelSlection:',strArr)
+    #        print('pairGroup:', pairGroup)
+            #交配
+            strArr = self.Crossover(strArr, pairGroup)
+    #        print('after Crossover:',strArr)
+            #突變
+            for i in range(self.populationSize):
+                strArr[i] = self.Mutation(strArr[i])
+    #        print('after Mutation:',strArr,'\n\n')
+                
+        print('Final', self.recordFitnessMax)
+        return self.recordFitnessMax
 if __name__ == '__main__' :
     import time
     startTime = time.time()
     print('START')
     test = GeneticAlgorithm()
     
-    
-    #儲存空間，String、Fitness
-    strArr = np.array([ '*'*test.bitNum for i in range(test.populationSize)])
-    fitnessArr = np.array([ 0 for i in range(test.populationSize)])
-    #生成 對應組數
-    for i in range(test.populationSize):
-        strArr[i] = test.GenerateBitString()
-    for count in range(2):
-        print(count, '-', strArr)
-        #Fitness，並記錄
-        for i in range(test.populationSize):
-            bitVal = test.CalBitValue(strArr[i])
-            fitnessArr[i] = test.FitnessFunc(bitVal)
-        if fitnessArr[fitnessArr.argmax()] > test.recordFitnessMax[1]:
-            test.recordFitnessMax = [strArr[fitnessArr.argmax()], fitnessArr[fitnessArr.argmax()]]
-        print(test.recordFitnessMax)
-        print('after Fitness:',strArr)
-        #輪盤法抓人出來配對
-        pairGroup = test.RouletteWheelSlection(strArr, fitnessArr)
-        print('after RouletteWheelSlection:',strArr)
-        print('pairGroup:', pairGroup)
-        #交配
-        strArr = test.Crossover(strArr, pairGroup)
-        print('after Crossover:',strArr)
-        #突變
-        for i in range(test.populationSize):
-            strArr[i] = test.Mutation(strArr[i])
-        print('after Mutation:',strArr,'\n\n')
-            
-    print('Final', test.recordFitnessMax)
+    test.MainFlow()
     
     endTime = time.time()
     print('\n\n\nEND,', 'It takes', endTime-startTime ,'sec.')
