@@ -9,7 +9,8 @@ Created on Fri Oct  5 02:51:31 2018
     1. RouletteWheelSlection 遇到 fitfunc 會生負數
      - 針對最小樹小於零的數列，直接加最小值的絕對值
     2. fitness 儲存格改成 float
-    3. (下一站)，跑到趨緩在停
+    *. (下一站)，'101' 改成 [1,0,1]
+    *. (下一站)，跑到趨緩在停
      - self.repeatGeneration FREE
 """
 """
