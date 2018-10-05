@@ -115,7 +115,7 @@ class GeneticAlgorithm():
                         break
 #            print(tmpPairLi)
             #配對與否
-            if random.random() > self.crossoverRate:
+            if random.random() < self.crossoverRate:
                 #one-point 交換點
                 crossoverPonint = random.randint(0, self.bitNum)
                 tmpStrLi = ['' for i in range(self.tournamentSize)] #暫存交換的String
@@ -197,12 +197,26 @@ class GeneticAlgorithm():
 #            print('after Mutation:',strArr,'\n\n')
         print('總子代數量:',len(strArr))
         return self.recordFitnessMax
+    def BitStringStatistic(self, amount = 10000):
+        maxF, minF = -100, 100
+        maxS, minS = '', ''
+        for i in range(10000):
+            bitStr = test.GenerateBitString()
+            val = test.CalCorrespondValue(bitStr)
+            fitne = test.FitnessFunc(val)
+            if fitne > maxF:
+                maxF = fitne
+                maxS = bitStr
+            if fitne < minF:
+                minF = fitne
+                minS = bitStr
+        print('max:', (maxS, maxF), 'min:', (minS, minF))
+        return
 if __name__ == '__main__' :
     import time
     startTime = time.time()
     print('START')
     test = GeneticAlgorithm()
-    
     ans = test.MainFlow()
     print('Final::', 'String:',ans[0], 'Value(x):', round(ans[1],5), 'Fitness:', round(ans[2], 5))
     
