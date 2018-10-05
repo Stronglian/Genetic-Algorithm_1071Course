@@ -9,8 +9,9 @@ Created on Fri Oct  5 02:51:31 2018
     1. RouletteWheelSlection 遇到 fitfunc 會生負數
      - 針對最小樹小於零的數列，直接加最小值的絕對值
     2. fitness 儲存格改成 float
-    3. (下一站)，跑到趨緩在停
+    -. (下一站)，跑到趨緩在停
      - self.repeatGeneration FREE
+    3. 交配率是切分點
 """
 """
 reference:
@@ -35,19 +36,20 @@ class GeneticAlgorithm():
         self.mutationRate     = 0.01 #突變率
         #自訂或相應的
         self.tournamentSize   = 2 # 一組配對的字串數
+#        self.crossoverPair    = 3  #配對用到組數 #靠，不知道要挑幾個，
         self.crossoverPair    = self.populationSize//self.tournamentSize -1  #配對用到數 
         self.repeatGeneration = 50 # = 世代數量 -1
         
+        #func
+        self.FitnessFunc = lambda x : (x)*np.sin(31.4*x)+1.0
         #題目指定
         self.domainUpperbound = 2.0
         self.domainLowerbound = -1.0
-        #function
-        self.FitnessFunc = lambda x : (x)*np.sin(31.4*x)+1.0
         
         #record
         self.recordFitnessMax = ['', 0, 0.0] #string, x, fitness
     def GenerateBitString(self):
-        """生成二進位字串"""
+        """"""
         bitString = ''
         for b in range(self.bitNum):
             bitString += random.choice(['0', '1'])
@@ -114,10 +116,12 @@ class GeneticAlgorithm():
                     if j == self.tournamentSize:
                         break
 #            print(tmpPairLi)
+            crossoverPonint = int(round(self.crossoverRate*self.bitNum,0))
             #配對與否
-            if random.random() > self.crossoverRate:
+#            if random.random() > self.crossoverRate:
+            if True:#
                 #one-point 交換點
-                crossoverPonint = random.randint(0, self.bitNum)
+#                crossoverPonint = random.randint(0, self.bitNum)
                 tmpStrLi = ['' for i in range(self.tournamentSize)] #暫存交換的String
                 for j in range( self.bitNum):
                     if j < crossoverPonint:
@@ -131,7 +135,7 @@ class GeneticAlgorithm():
                     for k in range(self.tournamentSize):
                         newLi[tmpPairLi[k]] = tmpStrLi[k]
                 else:
-                    #要保留舊有的，而且同位置可能有兩組
+                    #要保留舊有的
                     for k in range(self.tournamentSize):
                         newLi.append(tmpStrLi[k])
             else:
@@ -169,7 +173,6 @@ class GeneticAlgorithm():
         #生成 對應組數
         for i in range(self.populationSize):
             strArr[i] = self.GenerateBitString()
-#        print('initialGroup----\n', strArr)
         #開始世代輪替
         for count in range(self.repeatGeneration): 
 #            print(count, '-', strArr)
@@ -184,7 +187,7 @@ class GeneticAlgorithm():
 #            print('after Fitness:',strArr)
             #輪盤法抓人出來配對
             #--更新 配對數
-            self.crossoverPair = len(strArr)//self.tournamentSize -1  #配對用到數 
+            self.crossoverPair    = len(strArr)//self.tournamentSize -1  #配對用到數 
             pairGroup = self.RouletteWheelSlection(strArr, fitnessArr)
 #            print('after RouletteWheelSlection:',strArr)
 #            print('pairGroup:', pairGroup)
@@ -202,7 +205,6 @@ if __name__ == '__main__' :
     startTime = time.time()
     print('START')
     test = GeneticAlgorithm()
-    
     ans = test.MainFlow()
     print('Final::', 'String:',ans[0], 'Value(x):', round(ans[1],5), 'Fitness:', round(ans[2], 5))
     
