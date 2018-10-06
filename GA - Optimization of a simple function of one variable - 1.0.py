@@ -6,9 +6,11 @@ Created on Fri Oct  5 02:51:31 2018
 """
 """
 修改:
-    1. RouletteWheelSlection 遇到 fitfunc 會生負數
-     - 針對最小樹小於零的數列，直接加最小值的絕對值
-    2. fitness 儲存格改成 float
+    1.
+     -1. RouletteWheelSlection 遇到 fitfunc 會生負數
+      - 針對最小樹小於零的數列，直接加最小值的絕對值
+     -2. fitness 儲存格改成 float
+     -3. 是 隨機數字小於變異率(交配) 才會變異(交配)
     *. (下一站)，'101' 改成 [1,0,1]
     *. (下一站)，跑到趨緩在停
      - self.repeatGeneration FREE
@@ -158,7 +160,7 @@ class GeneticAlgorithm():
         newStr = ''
         for temp in inputStr:
             ranTemp = random.random()
-            if ranTemp > self.mutationRate:
+            if ranTemp < self.mutationRate:
                 temp = '0' if temp == '1' else '1'
             newStr+= temp
         return newStr
