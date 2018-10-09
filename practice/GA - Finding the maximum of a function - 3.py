@@ -20,7 +20,7 @@ class GeneticAlgorithm_maxOfFunc():
         wheelGetDiffPopOnlyTF:控制在取配對的時候可不可以單一字串參與多組配對，if true，輸出(strArr)仍有順序姓，else，持續往後疊加
         """
         #set 
-        self.wheelGetDiffPopOnlyTF = False
+        self.wheelGetDiffPopOnlyTF = True
         #value
         self.bitNum = 5 #位元數
         self.populationSize   = 8 #總字串數
