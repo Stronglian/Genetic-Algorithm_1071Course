@@ -35,17 +35,17 @@ class GeneticAlgorithm():
         self.__wheelGetDiffPopOnlyTF__ = True #唯一交配
         #value
         #題目指定
-        self.bitNum = 22 #位元數 #因為要精確到六位數，所以 2**21 < (self.domainUpperbound-self.domainLowerbound)*(10**6) <2**22
+        self.bitNum           = 22 #位元數 #因為要精確到六位數，所以 2**21 < (self.domainUpperbound-self.domainLowerbound)*(10**6) <2**22
         self.populationSize   = 50 #總字串數
-        self.crossoverRate    = 0.25 #交配率
-        self.mutationRate     = 0.01 #突變率
+        self.crossoverRate    =  0.25 #交配率
+        self.mutationRate     =  0.01 #突變率
         #自訂或相應的
-        self.tournamentSize   = 2 # 一組配對的字串數
+        self.tournamentSize   =  2 # 一組配對的字串數
         self.crossoverPair    = self.populationSize//self.tournamentSize -1  #配對用到數 
         self.repeatGeneration = 50 # = 世代數量 -1
         
         #題目指定
-        self.domainUpperbound = 2.0
+        self.domainUpperbound =  2.0
         self.domainLowerbound = -1.0
         #function
         self.FitnessFunc = lambda x : (x)*np.sin(31.4*x)+1.0
@@ -61,7 +61,7 @@ class GeneticAlgorithm():
         return bitString
     def CalBitValue(self, bitString):
         """計算二位元轉十進位"""
-        return int(bitString, 2)#sumNum
+        return int(bitString, 2)
     def CalCorrespondValue(self, bitString):
         """將 x 轉換到對應的值˙"""
         x_ = self.CalBitValue(bitString)
@@ -74,12 +74,12 @@ class GeneticAlgorithm():
         """
         weightArr = (fitnessArr.copy().astype(float)) +1 #處理0的問題
         pairGroup = [[] for i in range(len(inputArr))] #配對紀錄
-        #計算輪盤 #挑選、分組
+        #計算輪盤 
         pairNum = 0 #已有的配對數量
         pairNumCount = 0 #該配對有幾個成員(bitString)
         if weightArr.min() < 0: #若有值小於0就把所有值加上它的絕對值。
             weightArr += np.absolute(weightArr.min())
-            
+        #挑選、分組
         while pairNum < self.crossoverPair: #到達指定數量
             ranTmp = random.uniform(0, weightArr.sum())
             for i in range(len(weightArr)): #輪盤每一格的判斷
