@@ -32,7 +32,7 @@ class GeneticAlgorithm():
         __wheelGetDiffPopOnlyTF__:控制在取配對的時候可不可以單一字串參與多組配對，if true，輸出(strArr)仍有順序姓，else，持續往後疊加
         """
         #set 
-        self.__wheelGetDiffPopOnlyTF__ = True
+        self.__wheelGetDiffPopOnlyTF__ = True #唯一交配
         #value
         #題目指定
         self.bitNum = 22 #位元數 #因為要精確到六位數，所以 2**21 < (self.domainUpperbound-self.domainLowerbound)*(10**6) <2**22
@@ -52,6 +52,7 @@ class GeneticAlgorithm():
         
         #record
         self.recordFitnessMax = ['', 0, 0.0] #string, x, fitness
+        return
     def GenerateBitString(self):
         """生成二進位字串"""
         bitString = ''
@@ -60,10 +61,6 @@ class GeneticAlgorithm():
         return bitString
     def CalBitValue(self, bitString):
         """計算二位元轉十進位"""
-#        sumNum = 0
-#        for i, bit in enumerate(bitString[::-1]):#倒序
-#            bit = int(bit)
-#            sumNum += (2**i)*bit
         return int(bitString, 2)#sumNum
     def CalCorrespondValue(self, bitString):
         """將 x 轉換到對應的值˙"""
@@ -82,7 +79,7 @@ class GeneticAlgorithm():
         pairNumCount = 0 #該配對有幾個成員(bitString)
         if weightArr.min() < 0: #若有值小於0就把所有值加上它的絕對值。
             weightArr += np.absolute(weightArr.min())
-        while pairNum < self.crossoverPair:
+        while pairNum < self.crossoverPair: #到達指定數量
             ranTmp = random.uniform(0, weightArr.sum())
             for i in range(len(weightArr)): #輪盤每一格的判斷
                 if ranTmp < sum(weightArr[:i+1]):
@@ -123,7 +120,7 @@ class GeneticAlgorithm():
             #配對與否
             if random.random() < self.crossoverRate:
                 #one-point 交換點
-                crossoverPonint = random.randint(1, self.bitNum) #= 0 的時候不就沒配對了
+                crossoverPonint = random.randint(0, self.bitNum) #= 0 的時候不就沒配對了
                 tmpStrLi = ['' for i in range(self.tournamentSize)] #暫存交換的String
                 #Crossover
                 for k in range(self.tournamentSize):
