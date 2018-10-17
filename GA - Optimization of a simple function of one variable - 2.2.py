@@ -129,8 +129,7 @@ class GeneticAlgorithm():
                 #Crossover
                 for k in range(self.tournamentSize):
                     tmpStrLi[k] += inputArr[tmpPairLi[k]][0:crossoverPonint]
-#                    else: #後段交換
-                    #輪換，為了維持可以多組交配
+                    #後段交換 #輪換，為了維持可以多組交配
                     tmpStrLi[k] += inputArr[tmpPairLi[k+1 if k+1 < self.tournamentSize else 0]][crossoverPonint:]
                 #儲存
                 if self.__wheelGetDiffPopOnlyTF__:
